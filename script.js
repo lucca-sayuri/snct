@@ -27,7 +27,11 @@ const player = {
         this.frameX = 0
         this.frameY = 1
         this.maxFrameX = 1
-        
+        if (this.frameX > this.maxFrameX) {
+            this.frameX = 0
+            this.frameY = 0
+            this.maxFrame = 7
+        }
     },
     update(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
@@ -39,13 +43,13 @@ const player = {
         }
     },
     draw() {
-        ctx.drawImage(player.sprite, player.width * player.frameX, 0, player.width, player.height, player.x, player.y, player.width, player.height)
+        ctx.drawImage(player.sprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height)
     }
 }
 
 class Enemy {
     randomWord() {
-        const words = ["planta", "folha", "reciclar", "reusar", "repensar", "árvore", "flor", "sustentável", "reduzir", "repassar", "conservar", "ambiente", "eco", "energia", "mudança"]
+        const words = ["planta", "folha", "reciclar", "reusar", "repensar", "árvore", "flor", "reduzir", "repassar", "conservar", "ambiente", "eco", "energia", "mudança"]
         let rNumber = Math.floor(Math.random() * words.length)
         return(words[rNumber])
     }
