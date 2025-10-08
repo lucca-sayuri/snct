@@ -1,7 +1,20 @@
 const canvas = document.querySelector("#canvas")
+const game = document.querySelector("#game")
+const menu = document.querySelector("#menu")
+const menuButton = document.querySelector("#menuButton")
 const ctx = canvas.getContext('2d')
+const play = document.querySelector("#play")
 canvas.width = 1480
 canvas.height = 840
+
+play.addEventListener("click", () => {
+    game.classList.remove("hidden")
+    menu.classList.add("hidden")
+})
+menuButton.addEventListener("click", () => {
+    game.classList.add("hidden")
+    menu.classList.remove("hidden")
+})
 
 window.addEventListener('keydown', e => {
     if (e.key === enemy.array[0]) {
