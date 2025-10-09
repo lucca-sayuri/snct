@@ -4,6 +4,10 @@ const menu = document.querySelector("#menu")
 const menuButton = document.querySelector("#menuButton")
 const ctx = canvas.getContext('2d')
 const play = document.querySelector("#play")
+const enemies = []
+const defeatedEnemies = 0
+const spawnedEnemies = 0
+const maxEnemies = 10
 canvas.width = 1480
 canvas.height = 840
 
@@ -16,45 +20,61 @@ menuButton.addEventListener("click", () => {
     menu.classList.remove("hidden")
 })
 
-window.addEventListener('keydown', e => {
-    if (e.key === enemy.array[0]) {
-        enemy.array.splice(0, 1)
-        console.log(enemy.array)
-        player.attack()
+class InputHandler {
+    constructor() {
+        this.keys = []
+        document.addEventListener('keydown', e => {
+            if (this.keys.indexOf(e.key) === -1) {
+                this.keys.push(e.key)
+            }
+        })
+        document.addEventListener('keyup', e => {
+            keys.splice(this.keys.indexOf(e.key), 1)
+            console.log(this.keys)
+        })
     }
-}) 
+}
 
-const player = {
-    width: 400,
-    height: 400,
-    x: canvas.width * 0.1,
-    y: canvas.height * 0.5,
-    frameX: 0,
-    frameY: 0,
-    maxFrameX: 7,
-    fps: 4,
-    frameInterval: 1000 / 4,
-    frameTimer: 0,
-    sprite: document.querySelector("#playerSprite"),
+const input = new InputHandler
+
+class Player {
+    constructor() {
+        this.width = 400,
+        this.height = 400,
+        this.x = canvas.width * 0.1,
+        this.y = canvas.height * 0.5,
+        this.frameX = 0,
+        this.frameY = 0,
+        this.maxFrameX = 7,
+        this.fps = 4,
+        this.frameInterval = 1000 / 4,
+        this.frameTimer = 0,
+        this.idle = true,
+        this.sprite = document.querySelector("#playerSprite")
+    }
     attack() {
+        this.idle = false
+        setTimeout(() => {
+            this.frameX = 0
+            this.frameY = 0
+            this.maxFrameX = 7
+            this.idle = true
+        }, 500)
         this.frameX = 0
         this.frameY = 1
         this.maxFrameX = 1
-        if (this.frameX > this.maxFrameX) {
-            this.frameX = 0
-            this.frameY = 0
-            this.maxFrame = 7
-        }
-    },
+    }
     update(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0
             if (this.frameX < this.maxFrameX) this.frameX++
-            else this.frameX = 0
+            else if (this.idle === true) {
+                this.frameX = 0
+            }
         } else {
             this.frameTimer += deltaTime
         }
-    },
+    }
     draw() {
         ctx.drawImage(player.sprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height)
     }
@@ -85,7 +105,16 @@ class Enemy {
 }
 
 let lastTime = 0
-const enemy = new Enemy
+
+const player = new Player
+
+function spawnEnemy() {
+    const enemy = new Enemy
+    enemies.push(enemy)
+    console.log(enemy.array)
+}
+
+setInterval(spawnEnemy, 4000)
 
 function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime
@@ -93,9 +122,13 @@ function animate(timeStamp) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     player.update(deltaTime)
     player.draw()
-    enemy.draw()
-    enemy.update(deltaTime)
+    for (const enemy of enemies) {
+        enemy.draw()
+        enemy.update(deltaTime)
+    }
     requestAnimationFrame(animate)
 }
-console.log(enemy.array)
+for (const enemy of enemies) {
+    console.log(enemy.array)
+}
 animate(0)
