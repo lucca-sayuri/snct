@@ -29,7 +29,8 @@ class InputHandler {
             }
         })
         document.addEventListener('keyup', e => {
-            keys.splice(this.keys.indexOf(e.key), 1)
+            console.log(this.keys)
+            this.keys.splice(this.keys.indexOf(e.key), 1)
             console.log(this.keys)
         })
     }
@@ -82,7 +83,7 @@ class Player {
 
 class Enemy {
     randomWord() {
-        const words = ["planta", "folha", "reciclar", "reusar", "repensar", "árvore", "flor", "reduzir", "repassar", "conservar", "ambiente", "eco", "energia", "mudança"]
+        const words = ["planta", "folha", "reciclar", "reusar", "repensar", "arvore", "flor", "reduzir", "repassar", "conservar", "ambiente", "eco", "energia", "mudança"]
         let rNumber = Math.floor(Math.random() * words.length)
         return(words[rNumber])
     }
@@ -95,9 +96,20 @@ class Enemy {
         this.x = canvas.width - this.width
         this.y = canvas.height * 0.5
         this.image = document.querySelector("#placeholder")
+        this.speed = 1.25 - (this.array.length / 10)
     }
     update(deltaTime) {
-        this.x--
+        if (input.keys.includes(this.array[0]) === true) {
+            this.array.splice(0, 1)
+            console.log(this.array)
+        }
+        enemies.forEach((enemy, index) => {
+            if (enemy.array.length === 0) {
+                enemies.splice(index, 1)
+                player.attack()
+            }
+        });
+        this.x -= this.speed
     }
     draw() {
         ctx.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height)
