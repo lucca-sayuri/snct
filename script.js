@@ -2,6 +2,10 @@ const canvas = document.querySelector("#canvas")
 const game = document.querySelector("#game")
 const menu = document.querySelector("#menu")
 const menuButton = document.querySelector("#menuButton")
+const levels = document.querySelector("#levels")
+const level1 = document.querySelector("#fase1")
+const level2 = document.querySelector("#fase2")
+const level3 = document.querySelector("#fase3")
 const ctx = canvas.getContext('2d')
 const play = document.querySelector("#play")
 const enemies = []
@@ -15,22 +19,46 @@ chewy.load().then(function (font) {
 fira.load().then(function (font) {
     document.fonts.add(font)
 })
+grover.load().then(function (font) {
+    document.fonts.add(font)
+})
 
 let spawnInterval = 2000
 let defeatedEnemies = 0
 let spawnedEnemies = 0
-const maxEnemies = 25
+const maxEnemies = 20
 canvas.width = 1480
 canvas.height = 720
 
-play.addEventListener("click", () => {
+level1.addEventListener('click', () => {
+    levels.classList.add("hidden")
     game.classList.remove("hidden")
+})
+
+level2.addEventListener('click', () => {
+    levels.classList.add("hidden")
+    game.classList.remove("hidden")
+})
+
+level3.addEventListener('click', () => {
+    levels.classList.add("hidden")
+    game.classList.remove("hidden")
+})
+
+play.addEventListener("click", () => {
     menu.classList.add("hidden")
+    levels.classList.remove("hidden")
+    menuButton.classList.remove("hidden")
 })
 menuButton.addEventListener("click", () => {
     enemies.splice(0)
     game.classList.add("hidden")
+    levels.classList.add("hidden")
+    menuButton.classList.add("hidden")
     menu.classList.remove("hidden")
+    clearInterval(level1Interval)
+    clearInterval(level2Interval)
+    clearInterval(level3Interval)
 })
 
 class InputHandler {
@@ -65,6 +93,8 @@ class Player {
             this.idle = true,
             this.sprite = document.querySelector("#playerSprite")
         this.hearts = 3
+        this.points = 0
+        this.pointDisplay = `Pontos: ${this.points}`
     }
     attackRight() {
         this.idle = false
@@ -102,9 +132,15 @@ class Player {
         } else {
             this.frameTimer += deltaTime
         }
+        this.pointDisplay = `Pontos: ${this.points}`
     }
     draw() {
+        ctx.font = "20px fira"
+        ctx.textAlign = "left"
+        ctx.textBaseline = "top"
         ctx.drawImage(player.sprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height)
+        ctx.fillStyle = "gold"
+        ctx.fillText(this.pointDisplay, 30, 5)
     }
 }
 
@@ -114,20 +150,29 @@ class Enemy {
         this.color = this.colors[Math.floor(Math.random() * this.colors.length)]
         this.pos = this.position()
         this.array = this.randomArray()
-        this.width = 150
-        this.height = 150
         this.fps = 4
         if (this.pos === "left") {
+            this.width = 150
+            this.height = 150
+            this.y = (canvas.height * 0.95) - this.height
             this.x = 0 - this.width
             this.speed = 1
             this.arrows = this.convertArrows()
+            this.textY = this.y - (this.height * 0.3)
         } else {
             this.x = canvas.width
-            this.speed = 1.1 - (this.array.length / 10)
+            this.height = 22 * this.array.length
+            this.y = (canvas.height * 0.95) - this.height
+            this.width = 22 * this.array.length
+            if (this.height <= 88) {
+                this.textY = this.y - (this.height * 0.6)
+            } else {
+                this.textY = this.y - (this.height * 0.3)
+            }
+            this.speed = 1.2 - (this.array.length / 10)
             this.word = this.array.join("")
         }
 
-        this.y = (canvas.height * 0.95) - this.height
     }
 
     position() {
@@ -186,6 +231,8 @@ class Enemy {
     update(deltaTime) {
         if (this.pos === "left") {
             this.arrows = this.convertArrows()
+        } else {
+            this.word = this.array.join("")
         }
         if (input.keys.includes(this.array[0]) === true) {
             this.array.splice(0, 1)
@@ -194,30 +241,33 @@ class Enemy {
         enemies.forEach((enemy, index) => {
             if (enemy.array.length === 0) {
                 defeatedEnemies++
+                player.points += 25
                 enemies.splice(index, 1)
                 player.attackRight()
             }
             if ((enemy.pos === "left" && enemy.x > (canvas.width / 2) - (player.width / 2)) ||
                 (enemy.pos === "right" && enemy.x < (canvas.width / 2) + (player.width / 4))) {
                 enemies.splice(index, 1)
+                player.points -= 15
                 player.hurt()
             }
         });
-
         if (this.pos === "left") {
             this.x += this.speed
         } else {
             this.x -= this.speed
         }
+        if (player.points < 0) player.points = 0
     }
     draw() {
         ctx.fillStyle = this.color
         ctx.textAlign = "center"
         if (this.pos === "left") {
             ctx.font = "bold 48px fira"
-            ctx.fillText(this.arrows, this.x + (this.width / 2), this.y - (this.height * 0.3))
+            ctx.fillText(this.arrows, this.x + (this.width / 2), this.textY)
         } else {
             ctx.font = "40px grover"
+            ctx.fillText(this.word, this.x + (this.width / 2), this.textY)
         }
         ctx.fillRect(this.x, this.y, this.width, this.height)
     }
@@ -236,8 +286,10 @@ function spawnEnemy() {
     }
 }
 
-setInterval(spawnEnemy, 3000)
-
+function enemyInterval(diff) {
+    
+}
+ 
 function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime
     lastTime = timeStamp
