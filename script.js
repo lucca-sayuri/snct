@@ -8,7 +8,9 @@ const level2 = document.querySelector("#fase2")
 const level3 = document.querySelector("#fase3")
 const ctx = canvas.getContext('2d')
 const play = document.querySelector("#play")
+const background = document.querySelector("#background")
 const enemies = []
+let gameoverTimeout = true
 const chewy = new FontFace('chewy', 'url(assets/Chewy-Regular.ttf)')
 const fira = new FontFace('fira', 'url(assets/FiraCode-SemiBold.ttf')
 const grover = new FontFace('grover', 'url(assets/IrishGrover-Regular.ttf')
@@ -29,10 +31,17 @@ let maxEnemies = 0
 canvas.width = 1480
 canvas.height = 720
 
+play.addEventListener("click", () => {
+    menu.classList.add("hidden")
+    levels.classList.remove("hidden")
+    menuButton.classList.remove("hidden")
+})
+
 level1.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
-    maxEnemies = 15
+    maxEnemies = 12
+    background.classList.add("opacity-45")
     setTimeout(() => {
         enemySpawner(3)
     }, 5);
@@ -42,6 +51,7 @@ level2.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
     maxEnemies = 20
+    background.classList.add("opacity-45")
     setTimeout(() => {
         enemySpawner(2)
     }, 5);
@@ -51,25 +61,23 @@ level3.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
     maxEnemies = 25
+    background.classList.add("opacity-45")
     setTimeout(() => {
         enemySpawner(1)
     }, 5);
 })
 
-play.addEventListener("click", () => {
-    menu.classList.add("hidden")
-    levels.classList.remove("hidden")
-    menuButton.classList.remove("hidden")
-})
 menuButton.addEventListener("click", () => {
     enemies.splice(0)
     game.classList.add("hidden")
     levels.classList.add("hidden")
     menuButton.classList.add("hidden")
     menu.classList.remove("hidden")
-    pontos = 0
+    player.points = 0
     defeatedEnemies = 0
     spawnedEnemies = 0
+    player.hearts = 3
+    background.classList.remove("opacity-45")
     enemySpawner(0)
 })
 
@@ -106,6 +114,7 @@ class Player {
         this.hearts = 3
         this.points = 0
         this.pointDisplay = `Pontos: ${this.points}`
+        this.alive = true
     }
     attackRight() {
         this.idle = false
@@ -144,8 +153,57 @@ class Player {
             this.frameTimer += deltaTime
         }
         this.pointDisplay = `Pontos: ${this.points}`
+        if (maxEnemies === defeatedEnemies && maxEnemies != 0 && gameoverTimeout === true) {
+            gameoverTimeout = false
+                setTimeout(() => {
+                maxEnemies = 0
+                spawnedEnemies = 0 
+                defeatedEnemies = 0
+                player.points = 0
+                this.hearts = 3
+                this.alive = true
+                gameoverTimeout = true
+                game.classList.add("hidden")
+                menuButton.classList.add("hidden")
+                menu.classList.remove("hidden")
+                background.classList.remove("opacity-45")
+            }, 2000);
+        }
+        if (this.hearts === 0) {
+            gameoverTimeout = false
+            this.alive = false
+            canvas.classList.add("opacity-45")
+            setTimeout(() => {
+                maxEnemies = 0
+                spawnedEnemies = 0
+                defeatedEnemies = 0
+                player.points = 0
+                this.alive = true
+                this.hearts = 3
+                gameoverTimeout = true
+                game.classList.add("hidden")
+                menuButton.classList.add("hidden")
+                menu.classList.remove('hidden')
+                background.classList.remove("opacity-45")
+                canvas.classList.remove("opacity-65")
+            }, 2000);
+        }
     }
     draw() {
+        if (maxEnemies === defeatedEnemies && maxEnemies != 0) {
+                ctx.fillStyle = "yellow"
+                ctx.font = "50px grover"
+                ctx.textAlign = "center"
+                ctx.textBaseline = "middle"
+                ctx.fillText("V I T Ó R I A !", canvas.width / 2, canvas.height / 3)
+        }
+        if (this.hearts === 0) {
+            ctx.fillStyle = "crimson"
+            ctx.font = "35px grover"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.fillText("Derrota. . .", canvas.width / 2, canvas.height / 3)
+        }
         ctx.font = "20px fira"
         ctx.textAlign = "left"
         ctx.textBaseline = "top"
@@ -157,28 +215,31 @@ class Player {
 
 class Enemy {
     constructor() {
-        this.colors = ["black", "darkslategray", "darkgray", "crimson", "darkblue", "darkcyan", "darkmagenta", "darkorchid", "darkslateblue", "hotpink", "indigo", "midnightblue", "navy", "red", "saddlebrown", "teal", "maroon",  "brown", "sienna"]
+        this.colors = ["black", "darkblue", "mediumblue", "steelblue", "rebeccapurple", "darkmagenta", "darkorchid", "darkslateblue", "hotpink", "indigo", "midnightblue", "navy", "red", "purple", "gray", "rosybrown", "fuchsia", "deeppink", ""]
         this.color = this.colors[Math.floor(Math.random() * this.colors.length)]
         this.pos = this.position()
         this.array = this.randomArray()
         this.fps = 4
         if (this.pos === "left") {
-            this.width = 150
-            this.height = 150
+            this.width = 125 * (1 + (((Math.random() * 5) + 1) / 10))
+            this.height = this.width
             this.y = (canvas.height * 0.95) - this.height
             this.x = 0 - this.width
             this.speed = 1
             this.arrows = this.convertArrows()
-            this.textY = this.y - (this.height * 0.3)
+            this.textY = this.y - (this.height * 0.725)
         } else {
             this.x = canvas.width
             this.height = 22 * this.array.length
             this.y = (canvas.height * 0.95) - this.height
             this.width = 22 * this.array.length
             if (this.height <= 88) {
-                this.textY = this.y - (this.height * 0.6)
+                this.textY = this.y - (this.height * 3.6)
             } else {
-                this.textY = this.y - (this.height * 0.3)
+                this.textY = this.y - (this.height * 1.2)
+            }
+            if (this.array.join("") === "eco") {
+                this.textY = this.y - (this.height * 4.2)
             }
             this.speed = 1.2 - (this.array.length / 10)
             this.word = this.array.join("")
@@ -207,7 +268,7 @@ class Enemy {
             }
             return (arrows)
         } else {
-            const words = ["planta", "folha", "reciclar", "reusar", "repensar", "flor", "reduzir", "repassar", "conservar", "ambiente", "eco", "energia", "mudança"]
+            const words = ["planta", "folha", "bio", "fauna", "flora", "floresta", "mata", "ecologia", "habitat", "bioma", "solo", "atmosfera", "reciclar", "reusar", "repensar", "flor", "reduzir", "repassar", "conservar", "ambiente", "eco", "energia", "mudança"]
             let rNumberWord = Math.floor(Math.random() * words.length)
             let word = words[rNumberWord]
             let wordArray = word.split("")
@@ -262,9 +323,10 @@ class Enemy {
                 player.hurt()
             }
         });
-        if (this.pos === "left") {
+        if (this.pos === "left" && player.alive === true) {
             this.x += this.speed
-        } else {
+        }
+        if (this.pos === "right" && player.alive === true) {
             this.x -= this.speed
         }
         if (player.points < 0) player.points = 0
