@@ -23,26 +23,37 @@ grover.load().then(function (font) {
     document.fonts.add(font)
 })
 
-let spawnInterval = 2000
 let defeatedEnemies = 0
 let spawnedEnemies = 0
-const maxEnemies = 20
+let maxEnemies = 0
 canvas.width = 1480
 canvas.height = 720
 
 level1.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
+    maxEnemies = 15
+    setTimeout(() => {
+        enemySpawner(3)
+    }, 5);
 })
 
 level2.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
+    maxEnemies = 20
+    setTimeout(() => {
+        enemySpawner(2)
+    }, 5);
 })
 
 level3.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
+    maxEnemies = 25
+    setTimeout(() => {
+        enemySpawner(1)
+    }, 5);
 })
 
 play.addEventListener("click", () => {
@@ -56,9 +67,10 @@ menuButton.addEventListener("click", () => {
     levels.classList.add("hidden")
     menuButton.classList.add("hidden")
     menu.classList.remove("hidden")
-    clearInterval(level1Interval)
-    clearInterval(level2Interval)
-    clearInterval(level3Interval)
+    pontos = 0
+    defeatedEnemies = 0
+    spawnedEnemies = 0
+    enemySpawner(0)
 })
 
 class InputHandler {
@@ -70,7 +82,6 @@ class InputHandler {
             }
         })
         document.addEventListener('keyup', e => {
-            console.log(this.keys)
             this.keys.splice(this.keys.indexOf(e.key), 1)
         })
     }
@@ -236,7 +247,6 @@ class Enemy {
         }
         if (input.keys.includes(this.array[0]) === true) {
             this.array.splice(0, 1)
-            console.log(this.array)
         }
         enemies.forEach((enemy, index) => {
             if (enemy.array.length === 0) {
@@ -282,12 +292,16 @@ function spawnEnemy() {
     if (spawnedEnemies < maxEnemies) {
         spawnedEnemies++
         enemies.push(enemy)
-        console.log(enemy.array)
     }
 }
 
-function enemyInterval(diff) {
-    
+function enemySpawner(diff) {
+    const enemySpawn = setInterval(() => {
+        spawnEnemy()
+    }, 1000 * diff);
+    if (diff === 0) {
+        clearInterval(enemySpawn)
+    }
 }
  
 function animate(timeStamp) {
@@ -301,8 +315,5 @@ function animate(timeStamp) {
         enemy.update(deltaTime)
     }
     requestAnimationFrame(animate)
-}
-for (const enemy of enemies) {
-    console.log(enemy.array)
 }
 animate(0)
