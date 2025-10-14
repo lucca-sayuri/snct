@@ -21,21 +21,22 @@
 
 <body class="bg-black">
 
-    
+
     <img src="assets/scenery.png" class="absolute -z-50 w-full" id="background">
 
     <div id="game" class="hidden">
         <canvas id="canvas"
             class="border-2 border-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-800 z-1 bg-[url(assets/scenery.png)] bg-position-[center_bottom_0px]"></canvas>
         <img src="assets/suicide.png" class="hidden" id="playerSprite">
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black z-0 w-[1480px] h-[720px]"></div>
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black z-0 w-[1480px] h-[720px]">
+        </div>
     </div>
 
     <button
         class="fixed z-1 px-12 py-2 text-xl text-green-950 bg-[rgb(56,220,56)] shadow-[0px_4px_rgb(36,180,36)] rounded-xl font-gummy hidden font-bold cursor-pointer hover:bg-[rgb(46,190,46)] hover:shadow-[0px_4px_rgb(18, 80, 18)] active:shadow-none active:bg-[rgb(26,160,26)] active:mt-1 mb-2 active:mb-1 translate-y-8 translate-x-6"
         id="menuButton">Menu</button>
 
-    <div id="menu" class="flex flex-col items-center justify-center">
+    <div id="menu" class="flex hidden flex-col items-center justify-center">
         <div class="flex flex-col items-center justify-center mt-6 mb-22 px-14 py-8">
             <h1 class="text-emerald-700 text-center text-2xl font-margarine tracking-wider mb-4">Garden of</h1>
             <h1
@@ -49,16 +50,23 @@
                 id="play">Jogar</button>
             <br>
             <button
-                class="px-12 py-2 text-xl text-green-950 bg-[rgb(56,220,56)] shadow-[0px_4px_rgb(36,180,36)] rounded-xl font-gummy  font-bold cursor-pointer hover:bg-[rgb(46,190,46)] hover:shadow-[0px_4px_rgb(18, 80, 18)] active:shadow-none active:bg-[rgb(26,160,26)] active:mt-1 mb-2 active:mb-1">Créditos</button>
+                class="px-12 py-2 text-xl text-green-950 bg-[rgb(56,220,56)] shadow-[0px_4px_rgb(36,180,36)] rounded-xl font-gummy  font-bold cursor-pointer hover:bg-[rgb(46,190,46)] hover:shadow-[0px_4px_rgb(18, 80, 18)] active:shadow-none active:bg-[rgb(26,160,26)] active:mt-1 mb-2 active:mb-1"
+                id="creditsButton">Créditos</button>
         </div>
     </div>
 
     <div id="levels" class="hidden">
-        <div class="bg-green-800 absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/7 h-[640px] w-[800px] rounded-3xl border-green-600 border-3">
-            <h1 class="text-center relative top-1/7 left-1/2 -translate-x-1/2 text-3xl font-margarine text-emerald-100 tracking-wider">Selecione a fase:</h1>
+        <div
+            class="bg-green-800 absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/7 h-[640px] w-[800px] rounded-3xl border-green-600 border-3">
+            <h1
+                class="text-center relative top-1/7 left-1/2 -translate-x-1/2 text-3xl font-margarine text-emerald-100 tracking-wider">
+                Selecione a fase:</h1>
 
-            <div class="flex justify-center gap-20 items-center relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <button class="px-12 py-7 font-gummy text-green-900 active:text-green-950 text-3xl cursor-pointer bg-green-500 rounded-xl shadow-[0px_9px_rgb(40,140,40)] hover:bg-green-600 hover:shadow-[0px_9px_rgb(45,120,35)] active:bg-green-700 active:shadow-none mb-5 active:mt-2 active:mb-2" id="fase1">1</button>
+            <div
+                class="flex justify-center gap-20 items-center relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <button
+                    class="px-12 py-7 font-gummy text-green-900 active:text-green-950 text-3xl cursor-pointer bg-green-500 rounded-xl shadow-[0px_9px_rgb(40,140,40)] hover:bg-green-600 hover:shadow-[0px_9px_rgb(45,120,35)] active:bg-green-700 active:shadow-none mb-5 active:mt-2 active:mb-2"
+                    id="fase1">1</button>
 
                 <button
                     class="px-12 py-7 font-gummy text-yellow-900 active:text-yellow-950 text-3xl cursor-pointer bg-yellow-500 rounded-xl shadow-[0px_9px_rgb(160,160,10)] hover:bg-[rgb(224,159,20)] hover:shadow-[0px_9px_rgb(140,130,20)] active:bg-yellow-600 active:shadow-none mb-5 active:mt-2 active:mb-2"
@@ -74,6 +82,58 @@
             </div>
         </div>
     </div>
+
+    <div id="credits" class="hidden flex-col absolute top-1/6 left-1/2 -translate-x-1/2">
+        <div class="text-center">
+
+            <div class="mb-18 text-6xl font-griffy tracking-widest shadow-white">CRÉDITOS</div>
+
+            <div class="mb-12 font-gummy">
+                <h1 class="text-4xl font-griffy tracking-wider mb-2 text-fuchsia-800">Arte</h1>
+                <p class="text-lg">Lucca Yuki</p>
+                <p class="text-lg">Lulu Rivera</p>
+            </div>
+
+            <div class="mb-12 font-gummy">
+                <h1 class="text-4xl font-griffy tracking-wider mb-2 text-emerald-800">Código</h1>
+                <p class="text-lg">Lucca Yuki</p>
+            </div>
+
+            <div class="mb-12 font-gummy">
+                <h1 class="text-4xl font-griffy tracking-wider mb-2 text-yellow-500">Fontes</h1>
+                <a href="https://educador.brasilescola.uol.com.br/estrategias-ensino/a-distribuicao-agua-no-planeta.htm" class="text-lg text-blue-700">Educador UOL</a>
+            </div>
+
+            <div class="font-gummy">
+                <h2 class="text-2xl">Inspirado em: Google Doodle Halloween</h2>
+            </div>
+        </div>
+    </div>
+
+    <div id="facts" class="">
+        <div class="border-3 rounded-lg bg-green-800 text-center text-8xl font-griff absolute left-1/2 top-1/6 -translate-x-1/2 px-5 py-2 min-w-200 max-w-300 border-emerald-950">
+
+            <h1 class="font-griffy text-6xl text-green-600 tracking-[8px] mt-10 mb-4">FATO!!!</h1>
+
+            <hr class="mb-8 border-green-600">
+
+            <div class="flex mb-8 max-w-280">
+
+                <div class="flex-auto text-lg min-w-90 max-w-130 mr-5 flex">
+                    <p class="self-center text-green-200 font-margarine">
+                        A maior parte da água de nosso planeta, aproximadamente
+                    </p>
+                </div>
+
+                <div class="flex-auto text-lg min-w-90 max-w-130 ml-5">
+                    <img src="assets/agua.webp" alt="água" class="rounded-3xl" height="600">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 

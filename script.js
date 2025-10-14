@@ -6,6 +6,9 @@ const levels = document.querySelector("#levels")
 const level1 = document.querySelector("#fase1")
 const level2 = document.querySelector("#fase2")
 const level3 = document.querySelector("#fase3")
+const creditsButton = document.querySelector("#creditsButton")
+const credits = document.querySelector("#credits")
+const facts = document.querySelector("#facts")
 const ctx = canvas.getContext('2d')
 const play = document.querySelector("#play")
 const background = document.querySelector("#background")
@@ -30,6 +33,12 @@ let spawnedEnemies = 0
 let maxEnemies = 0
 canvas.width = 1480
 canvas.height = 720
+
+creditsButton.addEventListener("click", () => {
+    menu.classList.add("hidden")
+    credits.classList.remove("hidden")
+    menuButton.classList.remove("hidden")
+})
 
 play.addEventListener("click", () => {
     menu.classList.add("hidden")
@@ -69,10 +78,12 @@ level3.addEventListener('click', () => {
 
 menuButton.addEventListener("click", () => {
     enemies.splice(0)
+    credits.classList.add("hidden")
     game.classList.add("hidden")
     levels.classList.add("hidden")
     menuButton.classList.add("hidden")
     menu.classList.remove("hidden")
+    facts.classList.add("hidden")
     player.points = 0
     defeatedEnemies = 0
     spawnedEnemies = 0
@@ -164,9 +175,7 @@ class Player {
                 this.alive = true
                 gameoverTimeout = true
                 game.classList.add("hidden")
-                menuButton.classList.add("hidden")
-                menu.classList.remove("hidden")
-                background.classList.remove("opacity-45")
+                facts.classList.remove("hidden")
             }, 2000);
         }
         if (this.hearts === 0) {
