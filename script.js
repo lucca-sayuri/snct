@@ -9,10 +9,15 @@ const level3 = document.querySelector("#fase3")
 const creditsButton = document.querySelector("#creditsButton")
 const credits = document.querySelector("#credits")
 const facts = document.querySelector("#facts")
+const finalPoints = document.querySelector("#finalPoints")
+const perfect = document.querySelector("#perfectText")
 const ctx = canvas.getContext('2d')
 const play = document.querySelector("#play")
+const factText = document.querySelector("#factText")
+const factImg = document.querySelector("#factImg")
 const background = document.querySelector("#background")
 const enemies = []
+let level = 0
 let gameoverTimeout = true
 const chewy = new FontFace('chewy', 'url(assets/Chewy-Regular.ttf)')
 const fira = new FontFace('fira', 'url(assets/FiraCode-SemiBold.ttf')
@@ -49,11 +54,12 @@ play.addEventListener("click", () => {
 level1.addEventListener('click', () => {
     levels.classList.add("hidden")
     game.classList.remove("hidden")
-    maxEnemies = 12
+    maxEnemies = 2
     background.classList.add("opacity-45")
+    level = 1
     setTimeout(() => {
         enemySpawner(3)
-    }, 5);
+    }, 2000);
 })
 
 level2.addEventListener('click', () => {
@@ -61,9 +67,10 @@ level2.addEventListener('click', () => {
     game.classList.remove("hidden")
     maxEnemies = 20
     background.classList.add("opacity-45")
+    level = 2
     setTimeout(() => {
         enemySpawner(2)
-    }, 5);
+    }, 1500);
 })
 
 level3.addEventListener('click', () => {
@@ -71,9 +78,10 @@ level3.addEventListener('click', () => {
     game.classList.remove("hidden")
     maxEnemies = 25
     background.classList.add("opacity-45")
+    level = 3
     setTimeout(() => {
         enemySpawner(1)
-    }, 5);
+    }, 1000);
 })
 
 menuButton.addEventListener("click", () => {
@@ -87,7 +95,7 @@ menuButton.addEventListener("click", () => {
     player.points = 0
     defeatedEnemies = 0
     spawnedEnemies = 0
-    player.hearts = 3
+    player.hearts = ["good", "good", "good"]
     background.classList.remove("opacity-45")
     enemySpawner(0)
 })
@@ -110,7 +118,7 @@ const input = new InputHandler
 
 class Player {
     constructor() {
-        this.width = 400,
+        this.width = 600,
             this.height = 400,
             this.x = (canvas.width / 2) - (this.width / 2),
             this.y = (canvas.height * 0.95) - this.height
@@ -120,9 +128,13 @@ class Player {
             this.fps = 4,
             this.frameInterval = 1000 / 4,
             this.frameTimer = 0,
-            this.idle = true,
-            this.sprite = document.querySelector("#playerSprite")
-        this.hearts = 3
+            this.idle = true
+        this.sprite = document.querySelector("#playerSprite")
+        this.hearts = ["good", "good", "good"]
+        this.heartWidth = 100
+        this.heartHeight = 100
+        this.goodHeart = document.querySelector("#heart")
+        this.rottenHeart = document.querySelector("#rottenHeart")
         this.points = 0
         this.pointDisplay = `Pontos: ${this.points}`
         this.alive = true
@@ -145,13 +157,23 @@ class Player {
             this.frameX = 0
             this.frameY = 0
             this.maxFrameX = 7
+            this.idle = true
         }, 500);
         this.frameX = 0
         this.frameY = 2
         this.maxFrameX = 1
     }
     hurt() {
-        this.hearts--
+        this.idle = false
+        setTimeout(() => {
+            this.frameX = 0
+            this.frameY = 0
+            this.maxFrameX = 7
+            this.idle = true
+        }, 250);
+        this.frameX = 0
+        this.frameY = 3
+        this.maxFrameX = 0
     }
     update(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
@@ -166,47 +188,69 @@ class Player {
         this.pointDisplay = `Pontos: ${this.points}`
         if (maxEnemies === defeatedEnemies && maxEnemies != 0 && gameoverTimeout === true) {
             gameoverTimeout = false
-                setTimeout(() => {
-                maxEnemies = 0
-                spawnedEnemies = 0 
+            setTimeout(() => {
+                spawnedEnemies = 0
                 defeatedEnemies = 0
-                player.points = 0
-                this.hearts = 3
+                this.hearts = ["good", "good", "good"]
                 this.alive = true
                 gameoverTimeout = true
                 game.classList.add("hidden")
                 facts.classList.remove("hidden")
+                finalPoints.textContent = `Pontuação Final: ${this.points} pontos.`
+                if (this.points === 25 * maxEnemies) perfect.classList.remove("hidden")
+                enemies.splice(0)
+                enemySpawner(0)
+                switch (level) {
+                    case 1:
+                        factText.textContent = "A superfície de nosso planeta é cerca de 70% água, enquanto o resto é composto por terra. Pode parecer muito, porém somente uma pequena parcela dessa água, aproximadamente 2,5%, é água doce potável. E não é só: desses 2,5%, a maior parte, 69%, está nas geleiras (que dificulta seu acesso), 30% são águas subterrâneas e 1% se encontra em rios."
+                        factImg.src = "assets/agua.webp"
+                        factImg.alt = "água"
+                        break
+
+                    case 2:
+                        factText.textContent = "Você sabia que a água é essencial para a vida? Em média, 70% do corpo de um ser humano adulto é composto de água, podendo ser um número ainda maior dependendo de quão jovem é./n Além disso, a água é basicamente a razão da vida poder existir em nosso planeta. Os primeiros seres vivos surgiram em nossos grandes oceanos, e levou muito tempo para chegarem a pisar fora da água. Um outro fato é que, para procurar vida extraterreste, uma das grandes pistas que pesquisadores usam é a existência de água no planeta. Imagem: sopa primordial."
+                        factImg.src = "assets/sopa.webp"
+                        factImg.alt = "sopa primordial"
+                        break
+
+                    case 3:
+                        factText.textContent = "O maior aquífero do mundo, isso é, o maior armazém de água subterrâneo do mundo, está localizado bem aqui, na América do Sul, e seu nome é Grande Amazônia. Seu volume de água é aproximadamente 162.000km³, e possui extensão de cerca de 1.3 milhões de km². De acordo com pesquisadores da UFPA, o aquífero abasteceria o mundo inteiro por 250 anos, considerando que cada indivíduo consuma uma média de 150 litros de água por dia e possui uma expectativa de vida de 60 anos. Segue um mapa que compara o aquífero Grande Amazônia com outro grande aquífero, chamado Guarani."
+                        factImg.src = "assets/grandeamazonia.webp"
+                        factImg.alt = "grande amazonia aquifero"
+                }
             }, 2000);
         }
-        if (this.hearts === 0) {
+        if (this.hearts.includes("good") === false && gameoverTimeout === true) {
             gameoverTimeout = false
             this.alive = false
-            canvas.classList.add("opacity-45")
+            canvas.classList.add("opacity-65")
             setTimeout(() => {
                 maxEnemies = 0
                 spawnedEnemies = 0
                 defeatedEnemies = 0
                 player.points = 0
+                this.hearts = ["good", "good", "good"]
                 this.alive = true
-                this.hearts = 3
                 gameoverTimeout = true
                 game.classList.add("hidden")
                 menuButton.classList.add("hidden")
                 menu.classList.remove('hidden')
                 background.classList.remove("opacity-45")
                 canvas.classList.remove("opacity-65")
+                enemies.splice(0)
+                enemySpawner(0)
             }, 2000);
         }
     }
     draw() {
         if (maxEnemies === defeatedEnemies && maxEnemies != 0) {
-                ctx.fillStyle = "yellow"
-                ctx.font = "50px grover"
-                ctx.textAlign = "center"
-                ctx.textBaseline = "middle"
-                ctx.fillText("V I T Ó R I A !", canvas.width / 2, canvas.height / 3)
+            ctx.fillStyle = "yellow"
+            ctx.font = "50px grover"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.fillText("V I T Ó R I A !", canvas.width / 2, canvas.height / 3)
         }
-        if (this.hearts === 0) {
+        if (this.hearts.includes("good") === false) {
             ctx.fillStyle = "crimson"
             ctx.font = "35px grover"
             ctx.textAlign = "center"
@@ -216,9 +260,18 @@ class Player {
         ctx.font = "20px fira"
         ctx.textAlign = "left"
         ctx.textBaseline = "top"
+
+        this.hearts.forEach((heart, index) => {
+            if (this.hearts[index] === "good") {
+                ctx.drawImage(player.goodHeart, 0, 0, player.heartWidth, player.heartHeight, (((canvas.width / 2) - 175) + (player.heartWidth + 20) * index), 5, player.heartWidth, player.heartHeight)
+            } else {
+                ctx.drawImage(player.rottenHeart, 0, 0, player.heartWidth, player.heartHeight, (((canvas.width / 2) - 175) + (player.heartWidth + 20) * index), 5, player.heartWidth, player.heartHeight)
+            }
+        });
+
         ctx.drawImage(player.sprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height)
         ctx.fillStyle = "gold"
-        ctx.fillText(this.pointDisplay, 30, 5)
+        ctx.fillText(this.pointDisplay, 75, 5)
     }
 }
 
@@ -226,31 +279,41 @@ class Enemy {
     constructor() {
         this.colors = ["black", "darkblue", "mediumblue", "steelblue", "rebeccapurple", "darkmagenta", "darkorchid", "darkslateblue", "hotpink", "indigo", "midnightblue", "navy", "red", "purple", "gray", "rosybrown", "fuchsia", "deeppink", ""]
         this.color = this.colors[Math.floor(Math.random() * this.colors.length)]
+        this.sWidth = 400
+        this.sHeight = 400
         this.pos = this.position()
         this.array = this.randomArray()
         this.fps = 4
+        this.frameX = 0
+        this.frameY = 0
+        this.maxFrameX = 2
+        this.frameInterval = 1000 / 4,
+        this.frameTimer = 0
+
         if (this.pos === "left") {
-            this.width = 125 * (1 + (((Math.random() * 5) + 1) / 10))
-            this.height = this.width
-            this.y = (canvas.height * 0.95) - this.height
-            this.x = 0 - this.width
-            this.speed = 1
+            this.dWidth = 125 * (1 + (((Math.random() * 5) + 1) / 10))
+            this.sprite = document.querySelector("#reverseEnemySprites")
+            this.dHeight = this.dWidth
+            this.y = (canvas.height * 0.95) - this.dHeight
+            this.x = 0 - this.dWidth
+            this.speed = 1.15
             this.arrows = this.convertArrows()
-            this.textY = this.y - (this.height * 0.725)
+            this.textY = this.y - (this.dHeight * 0.725)
         } else {
             this.x = canvas.width
-            this.height = 22 * this.array.length
-            this.y = (canvas.height * 0.95) - this.height
-            this.width = 22 * this.array.length
-            if (this.height <= 88) {
-                this.textY = this.y - (this.height * 3.6)
+            this.sprite = document.querySelector("#enemySprites")
+            this.dHeight = 22 * this.array.length
+            this.y = (canvas.height * 0.95) - this.dHeight
+            this.dWidth = 22 * this.array.length
+            if (this.dHeight <= 88) {
+                this.textY = this.y - (this.dHeight * 3.6)
             } else {
-                this.textY = this.y - (this.height * 1.2)
+                this.textY = this.y - (this.dHeight * 1.2)
             }
             if (this.array.join("") === "eco") {
-                this.textY = this.y - (this.height * 4.2)
+                this.textY = this.y - (this.dHeight * 2.2)
             }
-            this.speed = 1.2 - (this.array.length / 10)
+            this.speed = 1.4 - (this.array.length / 10)
             this.word = this.array.join("")
         }
 
@@ -307,14 +370,23 @@ class Enemy {
             }
             arrows = array.join(" ")
         });
-        return(arrows)
+        return (arrows)
     }
     update(deltaTime) {
+        if (this.frameTimer > this.frameInterval) {
+            this.frameTimer = 0
+            if (this.frameX < this.maxFrameX) this.frameX++
+            else this.frameX = 0
+        } else {
+            this.frameTimer += deltaTime
+        }
+
         if (this.pos === "left") {
             this.arrows = this.convertArrows()
         } else {
             this.word = this.array.join("")
         }
+
         if (input.keys.includes(this.array[0]) === true) {
             this.array.splice(0, 1)
         }
@@ -323,11 +395,29 @@ class Enemy {
                 defeatedEnemies++
                 player.points += 25
                 enemies.splice(index, 1)
-                player.attackRight()
+                if (this.pos === "left") {
+                    player.attackLeft()
+                } else {
+                    player.attackRight()
+                }
             }
             if ((enemy.pos === "left" && enemy.x > (canvas.width / 2) - (player.width / 2)) ||
                 (enemy.pos === "right" && enemy.x < (canvas.width / 2) + (player.width / 4))) {
+                switch (true) {
+                    case (player.hearts[0] === "good" && player.hearts[1] === "good"):
+                        player.hearts[0] = "rotten"
+                        break
+
+                    case (player.hearts[0] === "rotten" && player.hearts[1] === "good"):
+                        player.hearts[1] = "rotten"
+                        break
+
+                    case (player.hearts[1] === "rotten" && player.hearts[2] === "good"):
+                        player.hearts[2] = "rotten"
+                        break
+                }
                 enemies.splice(index, 1)
+                defeatedEnemies++
                 player.points -= 15
                 player.hurt()
             }
@@ -345,12 +435,12 @@ class Enemy {
         ctx.textAlign = "center"
         if (this.pos === "left") {
             ctx.font = "bold 48px fira"
-            ctx.fillText(this.arrows, this.x + (this.width / 2), this.textY)
+            ctx.fillText(this.arrows, this.x + (this.dWidth / 2), this.textY)
         } else {
             ctx.font = "40px grover"
-            ctx.fillText(this.word, this.x + (this.width / 2), this.textY)
+            ctx.fillText(this.word, this.x + (this.dWidth / 2), this.textY)
         }
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.drawImage(this.sprite, this.frameX * this.sWidth, this.frameY * this.sHeight, this.sWidth, this.sHeight, this.x, this.y, this.dWidth, this.dHeight)
     }
 }
 
@@ -374,7 +464,7 @@ function enemySpawner(diff) {
         clearInterval(enemySpawn)
     }
 }
- 
+
 function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime
     lastTime = timeStamp

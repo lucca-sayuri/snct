@@ -26,9 +26,13 @@
 
     <div id="game" class="hidden">
         <canvas id="canvas"
-            class="border-2 border-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-800 z-1 bg-[url(assets/scenery.png)] bg-position-[center_bottom_0px]"></canvas>
-        <img src="assets/suicide.png" class="hidden" id="playerSprite">
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black z-0 w-[1480px] h-[720px]">
+            class=" mt-10 border-2 border-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-800 z-1 bg-[url(assets/scenery.png)] bg-position-[center_bottom_0px]"></canvas>
+        <img src="assets/edenSprites.png" class="hidden" id="playerSprite">
+        <img src="assets/heart.png" class="hidden" id="heart">
+        <img src="assets/rottenHeart.png" class="hidden" id="rottenHeart">
+        <img src="assets/enemySprites.png" class="hidden" id="enemySprites">
+        <img src="assets/reverseEnemySprites.png" class="hidden" id="reverseEnemySprites">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black mt-10 z-0 w-[1480px] h-[720px]">
         </div>
     </div>
 
@@ -36,7 +40,7 @@
         class="fixed z-1 px-12 py-2 text-xl text-green-950 bg-[rgb(56,220,56)] shadow-[0px_4px_rgb(36,180,36)] rounded-xl font-gummy hidden font-bold cursor-pointer hover:bg-[rgb(46,190,46)] hover:shadow-[0px_4px_rgb(18, 80, 18)] active:shadow-none active:bg-[rgb(26,160,26)] active:mt-1 mb-2 active:mb-1 translate-y-8 translate-x-6"
         id="menuButton">Menu</button>
 
-    <div id="menu" class="flex hidden flex-col items-center justify-center">
+    <div id="menu" class="flex flex-col items-center justify-center">
         <div class="flex flex-col items-center justify-center mt-6 mb-22 px-14 py-8">
             <h1 class="text-emerald-700 text-center text-2xl font-margarine tracking-wider mb-4">Garden of</h1>
             <h1
@@ -99,9 +103,12 @@
                 <p class="text-lg">Lucca Yuki</p>
             </div>
 
-            <div class="mb-12 font-gummy">
-                <h1 class="text-4xl font-griffy tracking-wider mb-2 text-yellow-500">Fontes</h1>
-                <a href="https://educador.brasilescola.uol.com.br/estrategias-ensino/a-distribuicao-agua-no-planeta.htm" class="text-lg text-blue-700">Educador UOL</a>
+            <div class="mb-12 font-gummy flex flex-col">
+                <h1 class="text-4xl font-griffy tracking-wider mb-2 text-yellow-600">Fontes</h1>
+                <a href="https://educador.brasilescola.uol.com.br/estrategias-ensino/a-distribuicao-agua-no-planeta.htm" class="text-2xl text-blue-700">Educador UOL</a>
+                <a href="https://www.gov.br/ana/pt-br/acesso-a-informacao/acoes-e-programas/cooperacao-internacional/agua-no-mundo" class="text-2xl text-yellow-500">gov.br</a>
+                <a href="https://www.cnnbrasil.com.br/saude/entenda-as-questoes-por-tras-da-quantidade-de-agua-recomendada-por-dia/" class="text-2xl text-red-700">CNN</a>
+                <a href="https://g1.globo.com/natureza/noticia/para-que-serve-um-aquifero-e-o-que-o-governo-pode-fazer-com-eles.ghtml" class="text-2xl text-orange-600">g1 Globo</a>
             </div>
 
             <div class="font-gummy">
@@ -110,23 +117,26 @@
         </div>
     </div>
 
-    <div id="facts" class="">
-        <div class="border-3 rounded-lg bg-green-800 text-center text-8xl font-griff absolute left-1/2 top-1/6 -translate-x-1/2 px-5 py-2 min-w-200 max-w-300 border-emerald-950">
+    <div id="facts" class="hidden">
+        <div class="border-3 rounded-lg bg-teal-800 text-center text-8xl font-griff absolute left-1/2 top-1/6 -translate-x-1/2 px-5 py-2 min-w-200 max-w-500 border-emerald-950">
 
-            <h1 class="font-griffy text-6xl text-green-600 tracking-[8px] mt-10 mb-4">FATO!!!</h1>
+            <p class="text-2xl text-sky-500 tracking-[4px] mt-10 mb-4 font-gummy" id="finalPoints"></p>
+            <p class="text-3xl text-yellow-400 tracking[5px] hidden mb-8 italic font-griffy" id="perfectText">PERFECT !</p>
 
-            <hr class="mb-8 border-green-600">
+            <hr class="mb-12 border-yellow-300">
 
-            <div class="flex mb-8 max-w-280">
+            <h1 class="font-griffy text-6xl text-cyan-600 tracking-[8px] mb-12">FATO!!!</h1>
 
-                <div class="flex-auto text-lg min-w-90 max-w-130 mr-5 flex">
-                    <p class="self-center text-green-200 font-margarine">
-                        A maior parte da água de nosso planeta, aproximadamente
+            <div class="flex mb-16 max-w-490 items-center">
+
+                <div class="flex-auto text-lg min-w-90 max-w-250 mr-5 flex">
+                    <p class="self-center text-teal-200 font-margarine" id="factText">
+                        
                     </p>
                 </div>
 
-                <div class="flex-auto text-lg min-w-90 max-w-130 ml-5">
-                    <img src="assets/agua.webp" alt="água" class="rounded-3xl" height="600">
+                <div class="flex-auto text-lg min-w-90 max-w-250 ml-5">
+                    <img src="" alt="água" class="rounded-3xl" width="600" id="factImg">
                 </div>
 
             </div>
